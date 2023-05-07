@@ -60,22 +60,21 @@ export default function Home() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [pack, setPack] = useState(0);
   const [claimTime, setClaimTime] = useState(0);
-  const [formattedCountdown, setFormattedCountdown] = useState('');
+  const [isPublic, setPublic] = useState(false);
+  
 
 
 
   useEffect(async () => {
     setPrice(await getNFTPrice());
     setTotalMinted(await getTotalMinted());
+    getTimeLeft();
     
 
 
   }, []);
 
-  useEffect( () => {
-    getTimeLeft();
-  }, [claimTime])
-
+ 
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -171,16 +170,34 @@ export default function Home() {
 
   }
 
-
 const getTimeLeft = async () => {
   let endTime;
   const isPublicSale = await baseContract.methods.publicMintActive().call();
+  setPublic(isPublicSale);
   if(isPublicSale){
     endTime = await baseContract.methods.publicEndTime().call();
   } else {
     endTime = await baseContract.methods.wlEndTime().call();
     
   }
+  let start = (Date.now() / 1000);
+  
+  let countdown;
+  if (endTime < start) {
+      countdown = "Ended";
+  } else {
+      countdown = endTime - start;
+  }
+  console.log(countdown)
+  setClaimTime(countdown);
+  
+
+}
+
+
+/*const getTimeLeft = async () => {
+  
+  
   
   let start = (Date.now() / 1000);
   
@@ -192,7 +209,7 @@ const getTimeLeft = async () => {
       countdown = secondsToDhms(seconds);
       
   }
-}
+}*/
 
 function secondsToDhms(seconds) {
   
@@ -207,7 +224,13 @@ function secondsToDhms(seconds) {
   var mDisplay = m > 0 ? (m < 10 ? "0"+m+":" : m+":") : "";
   var sDisplay = s > 0 ? (s < 10 ? "0"+s : s) : "";
 
-  setFormattedCountdown(`Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`);
+  if(isPublic){
+    return `Public Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
+  } else {
+    return `Whitelist Mint ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
+  }
+
+  
 }
   
 
@@ -390,7 +413,7 @@ function secondsToDhms(seconds) {
 
               <p className='text-frogger text-center text-2xl md:text-3xl uppercase font-bold mt-2 p-6'>Mint Your Pepellars</p>
               <span className='flex flex-row text-black text-xs px-2'><p className='px-2'>1. Connect</p> <p className='px-2'>2.Choose Your Pack</p> <p className='px-2'>3. Mint!</p></span>
-              <p className='text-red-500 font-bold text-2xl p-4 my-1'>{formattedCountdown}</p>
+              <p className='text-red-500 font-bold text-2xl p-4 my-1'>{secondsToDhms(claimTime)}</p>
               <p className='text-black font-bold text-3xl p-4 my-1'>{totalMinted}/1,000,000</p>
               <p className='text-frogger font-bold text-2xl p-4 my-1'>1 PEPELLAR = ~{price} ETH</p>
 
