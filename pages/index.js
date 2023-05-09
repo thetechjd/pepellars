@@ -283,8 +283,8 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>SpaceBlasterz</title>
-        <meta name="description" content="SpaceBlasterz NFT Dapp" />
+        <title>Pepellars</title>
+        <meta name="description" content="Pepellars NFT Dapp" />
         <link rel="icon" href="/" />
       </Head>
 
