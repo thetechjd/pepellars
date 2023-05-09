@@ -4,7 +4,7 @@ const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3('https://eth-sepolia.g.alchemy.com/v2/tZgBg81RgxE0pkpnQ6pjNpddJBd6nR_b');
 
 const contractABI = require("../pages/contract-abi.json");
-const contractAddress = "0xFCC78BF437e541B1AA75Bf9407f0CCBE6Dd81aC7";
+const contractAddress = "0xF657A95df78F78387C84baBC35594489F25f5feb";
 
 const nftContract = new web3.eth.Contract(
     contractABI,

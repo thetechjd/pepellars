@@ -400,9 +400,9 @@
     {
         "inputs": [
             {
-                "internalType": "enum PEPELLARS.Packs",
-                "name": "_pack",
-                "type": "uint8"
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
             }
         ],
         "name": "mint",
@@ -775,9 +775,9 @@
                 "type": "bytes32[]"
             },
             {
-                "internalType": "enum PEPELLARS.Packs",
-                "name": "_pack",
-                "type": "uint8"
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
             }
         ],
         "name": "whitelistMint",

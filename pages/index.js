@@ -8,10 +8,10 @@ import Link from 'next/link';
 import Head from 'next/head';
 import Footer from '../components/Footer';
 import { useStatus } from "../context/statusContext";
-import {getNFTPrice, getTotalMinted } from "../utils/interact.js";
+import { getNFTPrice, getTotalMinted } from "../utils/interact.js";
 
 const contractABI = require("../pages/contract-abi.json");
-const contractAddress = "0xFCC78BF437e541B1AA75Bf9407f0CCBE6Dd81aC7";
+const contractAddress = "0xF657A95df78F78387C84baBC35594489F25f5feb";
 
 const { MerkleTree } = require('merkletreejs');
 const KECCAK256 = require('keccak256');
@@ -61,7 +61,10 @@ export default function Home() {
   const [pack, setPack] = useState(0);
   const [claimTime, setClaimTime] = useState(0);
   const [isPublic, setPublic] = useState(false);
-  
+  const [amount, setAmount] = useState();
+  const [ethPrice, setEthPrice] = useState(0);
+  const [isWhitelisted, setIsWhitelisted] = useState(false);
+
 
 
 
@@ -69,20 +72,21 @@ export default function Home() {
     setPrice(await getNFTPrice());
     setTotalMinted(await getTotalMinted());
     getTimeLeft();
-    
+    getEth();
+
 
 
   }, []);
 
- 
+
 
   useEffect(() => {
     const interval = setInterval(() => {
-      
+
       setClaimTime(claimTime => claimTime - 1);
     }, 1000);
     return () => clearInterval(interval);
-    
+
   }, [])
 
 
@@ -133,11 +137,26 @@ export default function Home() {
         const address = accounts[0];
         setAddress(address);
 
+        if (!isPublic) {
+          checkWhitelist(address);
+        }
+
 
       }
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const checkWhitelist = async (address) => {
+    console.log(address)
+    let leaf = buf2hex(KECCAK256(address));
+    console.log("Leaf:" +leaf)
+    let proof = tree.getProof(leaf).map(x => buf2hex(x.data));
+    console.log(proof);
+    const wlcheck = await baseContract.methods.isValid(proof, leaf).call()
+    console.log(wlcheck)
+    setIsWhitelisted(wlcheck)
   }
 
 
@@ -147,94 +166,115 @@ export default function Home() {
       contractABI,
       contractAddress
     )
-    let total = 0;
+    let total = provider.utils.toWei(price, 'ether') * amount;
+    /*
+        if(pack === 1){
+          total = provider.utils.toWei(price, 'ether') * 1000;
+        } else {
+         total = provider.utils.toWei(price, 'ether') * 100;
+        }
+        */
 
-    if(pack === 1){
-      total = provider.utils.toWei(price, 'ether') * 1000;
-    } else {
-     total = provider.utils.toWei(price, 'ether') * 100;
-    }
-    
+
+
 
     let publicMintActive = await nftContract.methods.publicMintActive().call();
 
-    if(publicMintActive){
-      await nftContract.methods.mint(pack).send({ from: walletAddress, value: total, gas: 250000 });
+    if (publicMintActive) {
+      await nftContract.methods.mint(amount).send({ from: walletAddress, value: total, gas: 250000 });
     } else {
       let leaf = buf2hex(KECCAK256(walletAddress));
       let proof = tree.getProof(leaf).map(x => buf2hex(x.data));
-      await nftContract.methods.whitelistMint(proof, pack).send({ from: walletAddress, value: total, gas: 250000 });
+      await nftContract.methods.whitelistMint(proof, amount).send({ from: walletAddress, value: total, gas: 250000 });
     }
 
-    
+
 
   }
 
-const getTimeLeft = async () => {
-  let endTime;
-  const isPublicSale = await baseContract.methods.publicMintActive().call();
-  setPublic(isPublicSale);
-  if(isPublicSale){
-    endTime = await baseContract.methods.publicEndTime().call();
-  } else {
-    endTime = await baseContract.methods.wlEndTime().call();
-    
-  }
-  let start = (Date.now() / 1000);
-  
-  let countdown;
-  if (endTime < start) {
+  const getTimeLeft = async () => {
+    let endTime;
+    const isPublicSale = await baseContract.methods.publicMintActive().call();
+    setPublic(isPublicSale);
+    if (isPublicSale) {
+      endTime = await baseContract.methods.publicEndTime().call();
+    } else {
+      endTime = await baseContract.methods.wlEndTime().call();
+
+    }
+    let start = (Date.now() / 1000);
+
+    let countdown;
+    if (endTime < start) {
       countdown = "Ended";
-  } else {
+    } else {
       countdown = endTime - start;
-  }
-  console.log(countdown)
-  setClaimTime(countdown);
-  
-
-}
+    }
+    console.log(countdown)
+    setClaimTime(countdown);
 
 
-/*const getTimeLeft = async () => {
-  
-  
-  
-  let start = (Date.now() / 1000);
-  
-  let countdown;
-  if (endTime < start) {
-      countdown = "Ended";
-  } else {
-      let seconds = endTime - start;
-      countdown = secondsToDhms(seconds);
-      
-  }
-}*/
-
-function secondsToDhms(seconds) {
-  
-  seconds = Number(seconds);
-  var d = Math.floor(seconds / (3600 * 24));
-  var h = Math.floor(seconds % (3600 * 24) / 3600);
-  var m = Math.floor(seconds % 3600 / 60);
-  var s = Math.floor(seconds % 60);
-
-  var dDisplay = d > 0 ? d +":" : "";
-  var hDisplay = h > 0 ? (h < 10 ? "0"+h+":" : h+":") : "";
-  var mDisplay = m > 0 ? (m < 10 ? "0"+m+":" : m+":") : "";
-  var sDisplay = s > 0 ? (s < 10 ? "0"+s : s) : "";
-
-  if(isPublic){
-    return `Public Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
-  } else {
-    return `Whitelist Mint ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
   }
 
-  
-}
-  
+  const getEth = () => {
+    const { getEthPriceNow, getEthPriceHistorical } = require('get-eth-price');
 
-  
+    getEthPriceNow()
+
+      .then(data => {
+        var rawdata = JSON.stringify(data);
+        var prices = rawdata.split(',')
+        var usd = prices[1].match(/\d+/g);
+        var ethusd = parseInt(usd[0]);
+
+
+        setEthPrice(ethusd);
+      }
+
+      )
+  }
+
+
+  /*const getTimeLeft = async () => {
+    
+    
+    
+    let start = (Date.now() / 1000);
+    
+    let countdown;
+    if (endTime < start) {
+        countdown = "Ended";
+    } else {
+        let seconds = endTime - start;
+        countdown = secondsToDhms(seconds);
+        
+    }
+  }*/
+
+  function secondsToDhms(seconds) {
+
+    seconds = Number(seconds);
+    var d = Math.floor(seconds / (3600 * 24));
+    var h = Math.floor(seconds % (3600 * 24) / 3600);
+    var m = Math.floor(seconds % 3600 / 60);
+    var s = Math.floor(seconds % 60);
+
+    var dDisplay = d > 0 ? d + ":" : "";
+    var hDisplay = h > 0 ? (h < 10 ? "0" + h + ":" : h + ":") : "";
+    var mDisplay = m > 0 ? (m < 10 ? "0" + m + ":" : m + ":") : "";
+    var sDisplay = s > 0 ? (s < 10 ? "0" + s : s) : "";
+
+    if (isPublic) {
+      return `Public Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
+    } else {
+      return `WL Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
+    }
+
+
+  }
+
+
+
 
 
 
@@ -300,10 +340,10 @@ function secondsToDhms(seconds) {
                 </div>
                 <div className=''>
                   <ul className="flex flex-col items-center justify-between min-h-[250px]">
-                  <li className="border-b text-white border-gray-400 my-2 uppercase">
+                    <li className="border-b text-white border-gray-400 my-2 uppercase">
                       <a href="https://pepellars.wtf/">WTF?!</a>
                     </li>
-                   
+
                     <li>
 
                       {walletAddress.length > 0 ? (
@@ -339,7 +379,7 @@ function secondsToDhms(seconds) {
           text-black md:flex'>WTF?!</p>
                 </a>
               </li>
-              
+
               {/* CONNECT WALLET */}
               <li>
                 {walletAddress.length > 0 ? (
@@ -390,7 +430,7 @@ function secondsToDhms(seconds) {
 
 
       {/* Hero/Mint Section */}
-      <section className="flex items-center flex-row-reverse justify-center lg:justify-between bg-pale py-12 px-5 overflow-hidden relative z-1" id="">
+      <section className="flex items-center flex-row-reverse justify-center bg-pale py-12 px-5 overflow-hidden relative z-1" id="">
 
         {/* margin between header and hero section */}
         <div className="mb-2 flex items-center max-w-md mt-2"></div>
@@ -426,40 +466,64 @@ function secondsToDhms(seconds) {
               {walletAddress ? (
 
                 <div className='flex flex-col w-full'>
-                  <div className='flex md:flex-row justify-center w-full'>
-                  <div className='flex items-center justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
-                      {pack === 0 ? (
-                         <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
-                         100
-                        </button>
-                      ):(
-                        <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-gray-300 text-center text-white text-2xl md:text-4xl">
-                         100
-                        </button>
-                      )}
+                  {(!isPublic && isWhitelisted) ? (
 
-                      {pack === 1 ? (
-                         <button onClick={() => {setPack(1)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
-                         1000
-                        </button>
-                      ):(
-                        <button onClick={() => {setPack(1)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-gray-300 text-center text-white text-2xl md:text-4xl">
-                         1000
-                        </button>
-                      )}
-                       
-                        
+<div className='flex flex-col lg:flex-row justify-center w-full'>
+<div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
+  <input className='flex w-full lg:w-1/2 h-12 p-0 text-2xl' value={amount} placeholder='Pepellars' onChange={(e) => { setAmount(e.target.value) }} />
+  {/*{pack === 0 ? (
+     <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
+     100
+    </button>
+  ):(
+    <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-gray-300 text-center text-white text-2xl md:text-4xl">
+     100
+    </button>
+  )}
+
+  {pack === 1 ? (
+     <button onClick={() => {setPack(1)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
+     1000
+    </button>
+  ):(
+    <button onClick={() => {setPack(1)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-gray-300 text-center text-white text-2xl md:text-4xl">
+     1000
+    </button>
+  )}*/}
+
+  <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
+    <span className='flex whitespace-nowrap'><p>=~{amount ? amount / 5000 : 0} ETH</p><p className='text-gray-600'>(${amount ? parseInt((amount / 5000) * ethPrice).toFixed(2) : 0})</p></span>
+  </div>
+
+</div>
+
+<button
+  className='text-2xl md:text-5xl font-semibold my-4 mx-1 h-16 bg-opacity-100 rounded-md uppercase font-base text-white px-8 tracking-widest bg-frogger hover:bg-bluee'
+  // onClick={mintPass}
+  onClick={onMintPressed}
+>
+  Mint
+</button>
+
+
+</div>
+
+                  ):(
+
+                    <div className='flex flex-col lg:flex-row justify-center w-full'>
+                    <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
+                      <div className='flex w-full bg-red-500 border-4 border-white text-lg p-4 text-center text-white'>
+                        You are not whitelisted. Do not attempt to mint this round.
                       </div>
 
-                    <button
-                      className='text-2xl md:text-5xl font-semibold m-4 h-16 bg-opacity-100 rounded-md uppercase font-base text-white px-8 tracking-widest bg-frogger hover:bg-bluee'
-                      // onClick={mintPass}
-                      onClick={onMintPressed}
-                    >
-                      Mint
-                    </button>
+                    </div>
+
+                    
+
+
                   </div>
 
+                  )}
 
 
                   <div className='px-4 my-6 bg-opacity-20 text-black items-center relative h-9 tracking-wider sm:pt-0.5 md:pt-2 lg:pt-0.5 first::pt-0 duration-500 text-sm md:text-base padding-huge opacity-100 hover:bg-opacity-70 rounded flex justify-center flex-row border border-black hover:shadow-green-500/20 cursor-pointer'
@@ -475,9 +539,10 @@ function secondsToDhms(seconds) {
                 <>
 
                   <div className='flex flex-col w-full'>
-                    <div className='flex md:flex-row justify-center w-full'>
-                      <div className='flex items-center justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
-                      {pack === 0 ? (
+                    <div className='flex flex-col lg:flex-row justify-center w-full'>
+                      <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
+                        <input className='flex w-full lg:w-1/2 h-12 p-0 text-2xl' value={amount} placeholder='Pepellars' onChange={(e) => { setAmount(e.target.value) }} />
+                        {/*} {pack === 0 ? (
                          <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
                          100
                         </button>
@@ -495,13 +560,16 @@ function secondsToDhms(seconds) {
                         <button onClick={() => {setPack(1)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-gray-300 text-center text-white text-2xl md:text-4xl">
                          1000
                         </button>
-                      )}
-                       
-                        
+                      )}*/}
+                        <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
+                          <span className='flex whitespace-nowrap'><p>=~{amount ? amount / 5000 : 0} ETH</p><p className='text-gray-600'>(${amount ? parseInt((amount / 5000) * ethPrice).toFixed(2) : 0})</p></span>
+                        </div>
+
                       </div>
 
+
                       <button
-                        className='text-2xl md:text-5xl font-semibold m-4 h-16 bg-opacity-50 rounded-md uppercase font-base text-white px-8 tracking-widest bg-black hover:shadow-green-500/20'
+                        className='text-2xl md:text-5xl font-semibold my-4 mx-1 h-16 bg-opacity-50 rounded-md uppercase font-base text-white px-4 tracking-widest bg-black hover:shadow-green-500/20'
                         // onClick={mintPass}
                         onClick={onMintPressed}
                       >
@@ -548,7 +616,7 @@ function secondsToDhms(seconds) {
 
           </div>
           <div className='flex flex-col items-center lg:w-1/2 h-full text-center'>
-            <img src='/images/pepes.png' className='flex h-full mb-2'/>
+            <img src='/images/pepes.png' className='flex h-full mb-2' />
             <p>Future of memes</p>
           </div>
         </div>

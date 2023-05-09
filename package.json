@@ -16,6 +16,7 @@
     "authereum": "^0.1.14",
     "dotenv": "^16.0.1",
     "ethers": "^5.7.0",
+    "get-eth-price": "^1.0.0",
     "keccak256": "^1.0.6",
     "merkletreejs": "^0.2.32",
     "next": "latest",
