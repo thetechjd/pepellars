@@ -452,7 +452,7 @@ export default function Home() {
 
 
               <p className='text-frogger text-center text-2xl md:text-3xl uppercase font-bold mt-2 p-6'>Mint Your Pepellars</p>
-              <span className='flex flex-row text-black text-xs px-2'><p className='px-2'>1. Connect</p> <p className='px-2'>2.Choose Your Pack</p> <p className='px-2'>3. Mint!</p></span>
+              <span className='flex flex-row text-black text-xs px-2'><p className='px-2'>1. Connect</p> <p className='px-2'>2.Enter Pepellars Amount</p> <p className='px-2'>3. Mint!</p></span>
               <p className='text-red-500 font-bold text-2xl p-4 my-1'>{secondsToDhms(claimTime)}</p>
               <p className='text-black font-bold text-3xl p-4 my-1'>{totalMinted}/1,000,000</p>
               <p className='text-frogger font-bold text-2xl p-4 my-1'>1 PEPELLAR = ~{price} ETH</p>
@@ -470,7 +470,7 @@ export default function Home() {
 
 <div className='flex flex-col lg:flex-row justify-center w-full'>
 <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
-  <input className='flex w-full lg:w-1/2 h-12 p-0 text-2xl' value={amount} placeholder='Pepellars' onChange={(e) => { setAmount(e.target.value) }} />
+  <input className='flex w-full lg:w-1/2 h-12 p-0 text-2xl' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
   {/*{pack === 0 ? (
      <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
      100
@@ -491,8 +491,8 @@ export default function Home() {
     </button>
   )}*/}
 
-  <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
-    <span className='flex whitespace-nowrap'><p>=~{amount ? amount / 5000 : 0} ETH</p><p className='text-gray-600'>(${amount ? parseInt((amount / 5000) * ethPrice).toFixed(2) : 0})</p></span>
+  <div className='flex flex-row h-12 w-full text-lg lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
+    <span className='flex whitespace-nowrap'><p>=~{amount ? amount / 5000 : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5000) * ethPrice).toFixed(0) : 0})</p></span>
   </div>
 
 </div>
@@ -541,7 +541,7 @@ export default function Home() {
                   <div className='flex flex-col w-full'>
                     <div className='flex flex-col lg:flex-row justify-center w-full'>
                       <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
-                        <input className='flex w-full lg:w-1/2 h-12 p-0 text-2xl' value={amount} placeholder='Pepellars' onChange={(e) => { setAmount(e.target.value) }} />
+                        <input className='flex w-full h-12 p-0 text-lg' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
                         {/*} {pack === 0 ? (
                          <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
                          100
@@ -561,8 +561,8 @@ export default function Home() {
                          1000
                         </button>
                       )}*/}
-                        <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
-                          <span className='flex whitespace-nowrap'><p>=~{amount ? amount / 5000 : 0} ETH</p><p className='text-gray-600'>(${amount ? parseInt((amount / 5000) * ethPrice).toFixed(2) : 0})</p></span>
+                        <div className='flex flex-row h-12 w-full text-lg lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
+                          <span className='flex whitespace-nowrap'><p>=~{amount ? amount / 5000 : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5000) * ethPrice).toFixed(0) : 0})</p></span>
                         </div>
 
                       </div>
