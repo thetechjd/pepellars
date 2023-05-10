@@ -491,8 +491,8 @@ export default function Home() {
     </button>
   )}*/}
 
-  <div className='flex flex-row h-12 w-full text-lg lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
-    <span className='flex whitespace-nowrap'><p>=~{amount ? amount / 5555 : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5000) * ethPrice).toFixed(0) : 0})</p></span>
+  <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
+    <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 5555).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5555) * ethPrice).toFixed(0) : 0})</p></span>
   </div>
 
 </div>
@@ -561,8 +561,8 @@ export default function Home() {
                          1000
                         </button>
                       )}*/}
-                        <div className='flex flex-row h-12 w-full text-lg lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
-                          <span className='flex whitespace-nowrap'><p>=~{amount ? amount / 5000 : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5000) * ethPrice).toFixed(0) : 0})</p></span>
+                        <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
+                        <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 5555).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5555) * ethPrice).toFixed(0) : 0})</p></span>
                         </div>
 
                       </div>
