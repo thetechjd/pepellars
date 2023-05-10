@@ -41,7 +41,8 @@ module.exports = {
         greenn: 'var(--clr-green)',
         background: 'var(--clr-background)',
         pale: '#FFF7F0',
-        frogger: '#559302'
+        frogger: '#559302',
+        cream: '#bfbfbf'
       },
     },
   },

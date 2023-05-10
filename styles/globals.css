@@ -3,23 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: "Termina";
-  src: url("../public/fonts/Termina.ttf");
- 
-}
 
-@font-face {
-  font-family: "Futuristic Armour";
-  src: url("../public/fonts/FuturisticArmour.ttf");
- 
-}
-
-@font-face {
-  font-family: "Poppins";
-  src: url("../public/fonts/poppins.woff2");
- 
-}
 
 @font-face {
   font-family: "Toadfrog";
@@ -38,7 +22,7 @@
   --clr-green: #00f5d4;
   --clr-selection-bg: #cb3d92;
   --clr-selection-text: #f4f0f0;
-  --clr-background: #06070a;
+  --clr-background: #FFF7F0;
 }
 
 html, body {
@@ -47,7 +31,7 @@ html, body {
   scroll-behavior: smooth;
   font-family: var(--font-family);
   font-size: 20px;
-  /* background: var(--clr-background); */
+  background: var(--clr-background);
   color: var(--clr-selection-text);
 }
 

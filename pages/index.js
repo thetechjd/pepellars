@@ -430,7 +430,7 @@ export default function Home() {
 
 
       {/* Hero/Mint Section */}
-      <section className="flex items-center flex-row-reverse justify-center bg-pale py-12 px-5 overflow-hidden relative z-1" id="">
+      <section className="flex items-center flex-row-reverse justify-center bg-pale !py-20 px-5 overflow-hidden relative z-1" id="">
 
         {/* margin between header and hero section */}
         <div className="mb-2 flex items-center max-w-md mt-2"></div>
@@ -448,11 +448,11 @@ export default function Home() {
 
 
             {/* Total supply - Price info */}
-            <div className='flex flex-col bg-white bg-opacity-50 items-center justify-center justify-between text-black rounded-md w-3/4 md:w-[700px] mt-5 mx-auto px-12 py-4'>
+            <div className='flex flex-col bg-white border border-cream bg-opacity-50 items-center justify-center justify-between text-black rounded-md w-3/4 md:w-[700px] mt-5 mx-auto px-12 py-4'>
 
 
               <p className='text-frogger text-center text-2xl md:text-3xl uppercase font-bold mt-2 p-6'>Mint Your Pepellars</p>
-              <span className='flex flex-row text-black text-xs px-2'><p className='px-2'>1. Connect</p> <p className='px-2'>2.Enter Pepellars Amount</p> <p className='px-2'>3. Mint!</p></span>
+              <span className='flex flex-row text-black text-xs px-2'><p className='px-2'>1. Connect</p> <p className='px-2'>2. Enter Pepellars Amount</p> <p className='px-2'>3. Mint!</p></span>
               <p className='text-red-500 font-bold text-2xl p-4 my-1'>{secondsToDhms(claimTime)}</p>
               <p className='text-black font-bold text-3xl p-4 my-1'>{totalMinted}/1,000,000</p>
               <p className='text-frogger font-bold text-2xl p-4 my-1'>1 PEPELLAR = ~{price} ETH</p>
@@ -470,7 +470,7 @@ export default function Home() {
 
 <div className='flex flex-col lg:flex-row justify-center w-full'>
 <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
-  <input className='flex w-full lg:w-1/2 h-12 p-0 text-2xl' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
+  <input className='flex w-full !border-2 !border-frogger !rounded-md text-center lg:w-1/2 h-12 p-0 text-lg lg:text-xs' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
   {/*{pack === 0 ? (
      <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
      100
@@ -541,7 +541,7 @@ export default function Home() {
                   <div className='flex flex-col w-full'>
                     <div className='flex flex-col lg:flex-row justify-center w-full'>
                       <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
-                        <input className='flex w-full h-12 p-0 text-lg' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
+                        <input className='flex w-full !border-2 !border-frogger !rounded-md text-center lg:w-1/2 h-12 p-1 text-lg lg:text-xs' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
                         {/*} {pack === 0 ? (
                          <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
                          100
