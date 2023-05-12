@@ -206,7 +206,7 @@ export default function Home() {
 
     let countdown;
     if (endTime < start) {
-      countdown = "Ended";
+      countdown = 0;
     } else {
       countdown = endTime - start;
     }
@@ -265,9 +265,19 @@ export default function Home() {
     var sDisplay = s > 0 ? (s < 10 ? "0" + s : s) : "";
 
     if (isPublic) {
-      return `Public Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
+      if(seconds !== 0){
+        return `Public Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
+      } else {
+        return `Public Round has ended!`
+      }
+      
     } else {
-      return `WL Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
+      if(seconds !== 0){
+        return `WL Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
+      } else {
+        return `WL Round has ended!`
+      }
+      
     }
 
 
