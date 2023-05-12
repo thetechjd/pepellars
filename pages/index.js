@@ -139,6 +139,8 @@ export default function Home() {
 
         if (!isPublic) {
           checkWhitelist(address);
+        } else {
+          setPublic(true)
         }
 
 
