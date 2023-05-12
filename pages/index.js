@@ -73,6 +73,7 @@ export default function Home() {
     setTotalMinted(await getTotalMinted());
     getTimeLeft();
     getEth();
+    checkSale();
 
 
 
@@ -139,8 +140,6 @@ export default function Home() {
 
         if (!isPublic) {
           checkWhitelist(address);
-        } else {
-          setPublic(true)
         }
 
 
@@ -150,10 +149,15 @@ export default function Home() {
     }
   }
 
+  const checkSale = async () => {
+    const sale = await baseContract.methods.publicMintActive().call()
+    setPublic(sale)
+  }
+
   const checkWhitelist = async (address) => {
     console.log(address)
     let leaf = buf2hex(KECCAK256(address));
-    console.log("Leaf:" +leaf)
+    console.log("Leaf:" + leaf)
     let proof = tree.getProof(leaf).map(x => buf2hex(x.data));
     console.log(proof);
     const wlcheck = await baseContract.methods.isValid(proof, leaf).call()
@@ -267,19 +271,19 @@ export default function Home() {
     var sDisplay = s > 0 ? (s < 10 ? "0" + s : s) : "";
 
     if (isPublic) {
-      if(seconds !== 0){
+      if (seconds !== 0) {
         return `Public Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
       } else {
         return `Public Round has ended!`
       }
-      
+
     } else {
-      if(seconds !== 0){
+      if (seconds !== 0) {
         return `WL Round ends in ${dDisplay}${hDisplay}${mDisplay}${sDisplay}`;
       } else {
         return `WL Round has ended!`
       }
-      
+
     }
 
 
@@ -475,15 +479,15 @@ export default function Home() {
 
 
               {/* Increment & Decrement buttons */}
-              {(walletAddress && totalMinted < 1*10**6) ? (
+              {(walletAddress && totalMinted < 1 * 10 ** 6) ? (
 
                 <div className='flex flex-col w-full'>
-                  {(!isPublic && isWhitelisted) ? (
+                  {isPublic ? (
 
-<div className='flex flex-col lg:flex-row justify-center w-full'>
-<div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
-  <input className='flex w-full !border-2 !border-frogger !rounded-md text-center lg:w-1/2 h-12 p-0 text-lg lg:text-xs' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
-  {/*{pack === 0 ? (
+                    <div className='flex flex-col lg:flex-row justify-center w-full'>
+                      <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
+                        <input className='flex w-full !border-2 !border-frogger !rounded-md text-center lg:w-1/2 h-12 p-0 text-lg lg:text-xs' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
+                        {/*{pack === 0 ? (
      <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
      100
     </button>
@@ -503,58 +507,95 @@ export default function Home() {
     </button>
   )}*/}
 
-  <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
-    <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 5555).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5555) * ethPrice).toFixed(0) : 0})</p></span>
-  </div>
+                        <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
+                          <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 5555).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5555) * ethPrice).toFixed(0) : 0})</p></span>
+                        </div>
 
-</div>
-
-<button
-  className='text-2xl md:text-5xl font-semibold my-4 mx-1 h-16 bg-opacity-100 rounded-md uppercase font-base text-white px-8 tracking-widest bg-frogger hover:bg-bluee'
-  // onClick={mintPass}
-  onClick={onMintPressed}
->
-  Mint
-</button>
-
-
-</div>
-
-                  ):(
-
-                    <div className='flex flex-col lg:flex-row justify-center w-full'>
-                    <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
-                      <div className='flex w-full bg-red-500 border-4 border-white text-lg p-4 text-center text-white'>
-                        You are not whitelisted. Do not attempt to mint this round.
                       </div>
+
+                      <button
+                        className='text-2xl md:text-5xl font-semibold my-4 mx-1 h-16 bg-opacity-100 rounded-md uppercase font-base text-white px-8 tracking-widest bg-frogger hover:bg-bluee'
+                        // onClick={mintPass}
+                        onClick={onMintPressed}
+                      >
+                        Mint
+                      </button>
+
 
                     </div>
 
-                    
+                  ) : (
+                    <>
+                      {isWhitelisted ? (
+                        <>
+
+                          <div className='flex flex-col lg:flex-row justify-center w-full'>
+                            <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
+                              <input className='flex w-full !border-2 !border-frogger !rounded-md text-center lg:w-1/2 h-12 p-0 text-lg lg:text-xs' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
+                             
+
+                              <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
+                                <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 5555).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5555) * ethPrice).toFixed(0) : 0})</p></span>
+                              </div>
+
+                            </div>
+
+                            <button
+                              className='text-2xl md:text-5xl font-semibold my-4 mx-1 h-16 bg-opacity-100 rounded-md uppercase font-base text-white px-8 tracking-widest bg-frogger hover:bg-bluee'
+                              // onClick={mintPass}
+                              onClick={onMintPressed}
+                            >
+                              Mint
+                            </button>
 
 
-                  </div>
-
-                  )}
-
-
-                  <div className='px-4 my-6 bg-opacity-20 text-black items-center relative h-9 tracking-wider sm:pt-0.5 md:pt-2 lg:pt-0.5 first::pt-0 duration-500 text-sm md:text-base padding-huge opacity-100 hover:bg-opacity-70 rounded flex justify-center flex-row border border-black hover:shadow-green-500/20 cursor-pointer'
-                  >
-                    Connected:{String(walletAddress).substring(0, 6)}
-                    {"....."}
-                    {String(walletAddress).substring(39)}
-                  </div>
-                </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
 
 
-              ) : (
-                <>
+                          <div className='flex flex-col lg:flex-row justify-center w-full'>
+                            <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
+                              <div className='flex w-full bg-red-500 border-4 border-white text-lg p-4 text-center text-white'>
+                                You are not whitelisted. Do not attempt to mint this round.
+                              </div>
 
-                  <div className='flex flex-col w-full'>
-                    <div className='flex flex-col lg:flex-row justify-center w-full'>
-                      <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
-                        <input className='flex w-full !border-2 !border-frogger !rounded-md text-center lg:w-1/2 h-12 p-1 text-lg lg:text-xs' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
-                        {/*} {pack === 0 ? (
+                            </div>
+
+
+                          </div>
+                          </>
+
+
+                  
+                    )}
+
+
+
+                        </>
+
+                      )}
+
+
+
+                      <div className='px-4 my-6 bg-opacity-20 text-black items-center relative h-9 tracking-wider sm:pt-0.5 md:pt-2 lg:pt-0.5 first::pt-0 duration-500 text-sm md:text-base padding-huge opacity-100 hover:bg-opacity-70 rounded flex justify-center flex-row border border-black hover:shadow-green-500/20 cursor-pointer'
+                      >
+                        Connected:{String(walletAddress).substring(0, 6)}
+                        {"....."}
+                        {String(walletAddress).substring(39)}
+                      </div>
+                    </div>
+
+
+                  ) : (
+                  <>
+
+                    <div className='flex flex-col w-full'>
+                      <div className='flex flex-col lg:flex-row justify-center w-full'>
+                        <div className='flex flex-col lg:flex-row items-center w-full justify-between px-1 md:px-4 m-4 bg-transparent rounded-lg'>
+                          <input className='flex w-full !border-2 !border-frogger !rounded-md text-center lg:w-1/2 h-12 p-1 text-lg lg:text-xs' value={amount} placeholder='Pepellars amount' onChange={(e) => { setAmount(e.target.value) }} />
+                          {/*} {pack === 0 ? (
                          <button onClick={() => {setPack(0)}} className="flex items-center justify-between rounded-lg py-2 px-3 mx-1 bg-frogger text-center text-white text-2xl md:text-4xl">
                          100
                         </button>
@@ -573,39 +614,39 @@ export default function Home() {
                          1000
                         </button>
                       )}*/}
-                        <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
-                        <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 5555).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5555) * ethPrice).toFixed(0) : 0})</p></span>
+                          <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
+                            <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 5555).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5555) * ethPrice).toFixed(0) : 0})</p></span>
+                          </div>
+
                         </div>
 
+
+                        <button
+                          className='text-2xl md:text-5xl font-semibold my-4 mx-1 h-16 bg-opacity-50 rounded-md uppercase font-base text-white px-4 tracking-widest bg-black hover:shadow-green-500/20'
+                          // onClick={mintPass}
+                          onClick={onMintPressed}
+                        >
+                          Mint
+                        </button>
                       </div>
 
+                      <div className='flex flex-col items-center justify-center'>
 
-                      <button
-                        className='text-2xl md:text-5xl font-semibold my-4 mx-1 h-16 bg-opacity-50 rounded-md uppercase font-base text-white px-4 tracking-widest bg-black hover:shadow-green-500/20'
-                        // onClick={mintPass}
-                        onClick={onMintPressed}
-                      >
-                        Mint
-                      </button>
+                        <button className='w-2/3 md:w-1/2 text-sm md:text-lg px-3 md:px-0 mt-5 bg-black bg-opacity-100 text-white items-center h-12 relative tracking-wider pt-0.5 first::pt-0 duration-200 hover:bg-opacity-70 font-400 rounded text-2xs' id="walletButton"
+
+                          onClick={connectWallet}
+                        >Connect Wallet
+                        </button>
+
+                        <p className='text-center flex flex-col font-bold text-gray-700 text-base md:text-xl text-body-color leading-relaxed m-3 md:m-8 break-words ...'>
+                          Not connected!
+                        </p>
+                      </div>
                     </div>
 
-                    <div className='flex flex-col items-center justify-center'>
-
-                      <button className='w-2/3 md:w-1/2 text-sm md:text-lg px-3 md:px-0 mt-5 bg-black bg-opacity-100 text-white items-center h-12 relative tracking-wider pt-0.5 first::pt-0 duration-200 hover:bg-opacity-70 font-400 rounded text-2xs' id="walletButton"
-
-                        onClick={connectWallet}
-                      >Connect Wallet
-                      </button>
-
-                      <p className='text-center flex flex-col font-bold text-gray-700 text-base md:text-xl text-body-color leading-relaxed m-3 md:m-8 break-words ...'>
-                        Not connected!
-                      </p>
-                    </div>
-                  </div>
-
-                </>
+                  </>
               )}
-            </div>
+                </div>
 
 
 
@@ -615,8 +656,8 @@ export default function Home() {
 
 
             {/* Total:  {nftPrice} + Gas */}
-            {/* Mint Status */}
-            {/* {status && (
+              {/* Mint Status */}
+              {/* {status && (
       <div className="flex items-center justify-center">
         {status}
       </div>
@@ -624,14 +665,14 @@ export default function Home() {
 
 
 
-            {/* Right Hero Section - Video/Image Bird PASS */}
+              {/* Right Hero Section - Video/Image Bird PASS */}
 
+            </div>
+            <div className='flex flex-col items-center lg:w-1/2 h-full text-center'>
+              <img src='/images/pepes.png' className='flex h-full mb-2' />
+              <p>Future of memes</p>
+            </div>
           </div>
-          <div className='flex flex-col items-center lg:w-1/2 h-full text-center'>
-            <img src='/images/pepes.png' className='flex h-full mb-2' />
-            <p>Future of memes</p>
-          </div>
-        </div>
       </section>
 
 
