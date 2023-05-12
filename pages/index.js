@@ -473,7 +473,7 @@ export default function Home() {
 
 
               {/* Increment & Decrement buttons */}
-              {walletAddress ? (
+              {(walletAddress && totalMinted < 1*10**6) ? (
 
                 <div className='flex flex-col w-full'>
                   {(!isPublic && isWhitelisted) ? (
