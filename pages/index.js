@@ -508,7 +508,7 @@ export default function Home() {
   )}*/}
 
                         <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
-                          <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 5555).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5555) * ethPrice).toFixed(0) : 0})</p></span>
+                          <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 26219).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 26219) * ethPrice).toFixed(0) : 0})</p></span>
                         </div>
 
                       </div>
@@ -535,7 +535,7 @@ export default function Home() {
                              
 
                               <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
-                                <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 5555).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5555) * ethPrice).toFixed(0) : 0})</p></span>
+                                <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 26219).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 26219) * ethPrice).toFixed(0) : 0})</p></span>
                               </div>
 
                             </div>
@@ -615,7 +615,7 @@ export default function Home() {
                         </button>
                       )}*/}
                           <div className='flex flex-row h-12 w-full text-md lg:w-1/2 mx-2 py-2 whitespace-nowrap'>
-                            <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 5555).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 5555) * ethPrice).toFixed(0) : 0})</p></span>
+                            <span className='flex whitespace-nowrap'><p>=~{amount ? (amount / 26219).toFixed(4) : 0} ETH</p><p className='text-gray-600 ml-2'>(${amount ? parseInt((amount / 26219) * ethPrice).toFixed(0) : 0})</p></span>
                           </div>
 
                         </div>
